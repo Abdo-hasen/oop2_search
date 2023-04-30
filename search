@@ -1,0 +1,134 @@
+Magic methods ( get - set - call - call static ...etc)
+                  ###########################
+
+In PHP, magic methods are special methods that have special behavior and are
+ automatically called by the PHP runtime in response to certain actions or events. Here are some examples of commonly used magic methods in PHP
+:
+
+1. `__get()` and `__set()`: These magic methods are used to intercept attempts to read or write to inaccessible or undefined properties of an object. For example:
+
+```
+
+class Person {
+    private $name;
+
+    public function __get($property) {
+        if ($property === 'name') {
+            return $this->name;
+        }
+    }
+
+    public function __set($property, $value) {
+        if ($property === 'name') {
+            $this->name = $value;
+        }
+    }
+}
+
+$person = new Person();
+$person->name = 'John'; // Calls __set() magic method
+echo $person->name; // Calls __get() magic method and prints "John"
+```
+
+2. `__call()` and `__callStatic()`: These magic methods are used to intercept calls to undefined or inaccessible methods of an object or class, respectively. For example:
+
+```
+class Math {
+    public static function __callStatic($name, $arguments) {
+        if ($name === 'add') {
+            return array_sum($arguments);
+        }
+    }
+}
+
+echo Math::add(1, 2, 3); // Calls __callStatic() magic method and prints "6"
+```
+
+In this example, the `Math` class defines the `__callStatic()` magic method to intercept calls to undefined static methods. The method checks if the method name is 'add' and returns the sum of the arguments if it is.
+
+These are just a few examples of the many magic methods available in PHP. Magic methods can be used to implement a variety of advanced features and behaviors in PHP classes. It's important to use them judiciously and understand their limitations and potential side effects.
+
+
+##############################################################
+
+OOP vs functional Vs procedural programming
+###########################
+
+Object-oriented programming (OOP), functional programming, and procedural programming are all programming paradigms that offer different approaches to solving problems.
+
+Procedural programming is the traditional way of writing code, where the focus is on writing a sequence of instructions that operate on data. This approach is based on the concept of procedures or functions, which are reusable blocks of code that can be called from other parts of the program. Procedural programming is typically used for small to medium-sized programs and is well-suited for tasks that involve simple data processing and manipulation.
+
+Functional programming is a programming paradigm that emphasizes the use of functions to solve problems. In this approach, functions are treated as first-class citizens, meaning that they can be passed as arguments to other functions, returned as values from functions, and assigned to variables. Functional programming is based on the principles of immutability and referential transparency, which means that functions do not modify the data they operate on and always return the same output for the same input. This approach is well-suited for tasks that involve complex data processing and manipulation, and is often used in the development of scientific, mathematical, and financial applications.
+
+Object-oriented programming is a programming paradigm that emphasizes the use of objects to model real-world entities and their interactions. In this approach, data and behavior are encapsulated within objects, which can communicate with each other and change their internal state based on messages received from other objects. Object-oriented programming is based on the principles of abstraction, inheritance, and polymorphism, which allow for the creation of complex systems that can be easily extended and modified. This approach is well-suited for tasks that involve complex interactions between different entities, such as user interfaces, games, and simulations.
+
+In summary, each programming paradigm offers a different approach to solving problems, and the choice of paradigm depends on the specific requirements of the task at hand. Procedural programming is suitable for small to medium-sized programs that involve simple data processing and manipulation, functional programming is suitable for complex data processing and manipulation, and object-oriented programming is suitable for complex interactions between different entities.
+
+##############################################################
+
+Cloning in php ( shallow copy and deep copy)
+###########################
+
+In PHP, cloning is the process of creating a copy of an object. When an object is cloned, a new instance of the object is created with the same properties and values as the original object.
+
+There are two types of cloning in PHP: shallow copy and deep copy.
+
+Shallow copy: A shallow copy creates a new object that is a copy of the original object, but the properties of the new object still reference the same objects as the original object. In other words, the new object and the original object share the same references to any objects that are properties of the original object. Shallow copying can be performed using the default `clone` keyword in PHP.
+
+Here's an example of shallow copying in PHP:
+
+```
+class Person {
+    public $name;
+    public $age;
+
+    public function __clone() {
+        // This method is called when the object is cloned
+    }
+}
+
+$person1 = new Person();
+$person1->name = 'John';
+$person1->age = 30;
+
+$person2 = clone $person1;
+$person2->age = 40;
+
+echo $person1->age; // Outputs 30
+echo $person2->age; // Outputs 40
+```
+
+In this example, `$person2` is a shallow copy of `$person1`, meaning that the properties of `$person2` reference the same objects as the properties of `$person1`.
+
+Deep copy: A deep copy creates a new object that is a complete copy of the original object, including any objects that are properties of the original object. In other words, the new object and the original object have separate and distinct references to any objects that are properties of the original object. Deep copying can be achieved using custom cloning logic in PHP.
+
+Here's an example of deep copying in PHP:
+
+```
+class Person {
+    public $name;
+    public $age;
+
+    public function __clone() {
+        $this->name = clone $this->name;
+    }
+}
+
+$name = new stdClass();
+$name->first = 'John';
+$name->last = 'Doe';
+
+$person1 = new Person();
+$person1->name = $name;
+$person1->age = 30;
+
+$person2 = clone $person1;
+$person2->name->last = 'Smith';
+
+echo $person1->name->last; // Outputs "Doe"
+echo $person2->name->last; // Outputs "Smith"
+```
+
+In this example, `$person2` is a deep copy of `$person1`, meaning that the properties of `$person2` have separate and distinct references to any objects that are properties of `$person1`. The custom `__clone()` method in the `Person` class ensures that the `$name` property is deep copied as well, so that changes to the `$name` property of `$person2` do not affect the `$name` property of `$person1`.
+
+It's important to note that cloning can have performance implications and should be used judiciously. Additionally, custom cloning logic can be complex and error-prone, so it's important to thoroughly test any cloned objects to ensure that they behave as expected.
